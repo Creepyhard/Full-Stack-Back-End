@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.novo.condominio.model.Usuario;
 import br.com.novo.condominio.repository.UsuarioRepository;
+
 @CrossOrigin(origins="http://localhost:4200")  
 @RestController
 @RequestMapping("/usuarios")
@@ -46,6 +47,18 @@ public class UsuarioController {
 	@PutMapping
 	public Usuario atualizar(@RequestBody Usuario usuario) {
 		return usuarioRepository.save(usuario);
+	}
+	@PutMapping({"/{id}"})
+	public ResponseEntity<Usuario> atualizarUsuario(@PathVariable Long id, @RequestBody Usuario usuarioDetalhes){
+		Usuario usuario = usuarioRepository.findById(id)
+				.orElseThrow();
+		
+		usuario.setNome(usuarioDetalhes.getNome());
+		usuario.setEmail(usuarioDetalhes.getEmail());
+		usuario.setSenha(usuarioDetalhes.getSenha());
+		
+		Usuario atualizaUsuario = usuarioRepository.save(usuario);
+		return ResponseEntity.ok(atualizaUsuario);
 	}
 
 	@DeleteMapping(path = { "/{id}" })
