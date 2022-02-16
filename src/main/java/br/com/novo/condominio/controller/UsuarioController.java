@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.novo.condominio.model.Usuario;
 import br.com.novo.condominio.repository.UsuarioRepository;
+import br.com.novo.condominio.service.UsuarioService;
 
 @CrossOrigin(origins="http://localhost:4200")  
 @RestController
@@ -24,6 +25,8 @@ public class UsuarioController {
 	
 	@Autowired
 	private UsuarioRepository usuarioRepository;
+	
+	private UsuarioService usuarioService;
 
 	@GetMapping
 	public List<Usuario> listar() {
@@ -67,5 +70,18 @@ public class UsuarioController {
 			usuarioRepository.deleteById(id);
 			return ResponseEntity.ok().build();
 		}).orElse(ResponseEntity.notFound().build());
+	}
+	@PostMapping("/login")
+	public Usuario loginUsuario(@RequestBody Usuario usuario) throws Exception {
+		String emailT = usuario.getEmail();
+		String senhaT = usuario.getSenha();
+		Usuario usuarioObjeto = null;
+		if(emailT != null && senhaT != null) {
+			usuarioObjeto = usuarioRepository.findByEmailSenha(emailT, senhaT);
+		}
+		if (usuarioObjeto == null) {
+			throw new Exception("Email ou senha incorreto");
+		}
+		return usuarioObjeto;
 	}
 }
